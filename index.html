@@ -5,11 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>反赌博戒赌训练器</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif}
 body{background:#111;color:#fff;padding:20px;max-width:460px;margin:0 auto}
-.card{background:#1a1a1a;padding:22px;border-radius:16px;margin-bottom:16px}
+.card{background:#1a1a1a;padding:22px;border-radius:16px}
 h2{text-align:center;margin-bottom:10px}
 .tip{color:#ff5555;text-align:center;font-size:14px;margin-bottom:12px}
+
+/* 倒计时 */
+.count-box{
+  background:#222;padding:8px 12px;border-radius:8px;text-align:center;
+  margin-bottom:12px;font-size:14px;color:#ffaa00;font-weight:bold;display:none
+}
+.count-box.show{display:block}
+
+/* 激活弹窗 */
+.mask{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.95);z-index:999;
+  display:flex;align-items:center;justify-content:center;padding:20px
+}
+.activate-box{
+  background:#222;padding:28px;border-radius:18px;width:100%;max-width:360px
+}
+.activate-box h3{text-align:center;color:#ffaa00;margin-bottom:20px}
+.activate-input{
+  width:100%;padding:14px;background:#333;color:#fff;
+  border:1px solid #555;border-radius:10px;margin-bottom:14px;font-size:16px
+}
+.activate-btn{
+  width:100%;padding:14px;background:#0099cc;color:#fff;
+  border:none;border-radius:10px;font-size:16px;font-weight:bold
+}
+.activate-tip{
+  font-size:12px;color:#aaa;margin-top:14px;text-align:center;line-height:1.4
+}
+.activate-tip b{color:#ff4444}
+
+/* 功能样式 */
 .row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}
 input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:8px;margin-bottom:10px}
 .btns{display:flex;gap:8px;margin-bottom:10px}
@@ -23,21 +55,52 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 .btn-debt{background:#ff2222;margin-top:8px}
 .btn-curve{background:#4444ff;margin-top:8px}
 
-.chart{height:120px;background:#222;border-radius:10px;padding:10px;margin:12px 0;display:flex;align-items:flex-end;gap:2px}
-.bar{flex:1;border-radius:2px 2px 0 0}
-.bar-z{background:#0099cc;height:60%}
-.bar-x{background:#ff4444;height:60%}
-.bar-h{background:#888;height:40%}
+.road{
+  background:#003d2b;padding:12px;border-radius:10px;margin:12px 0;
+  display:flex;flex-wrap:wrap;gap:5px;min-height:130px;justify-content:center
+}
+.road-item{
+  width:31px;height:31px;border-radius:5px;display:flex;
+  align-items:center;justify-content:center;font-size:12px;
+  font-weight:bold;color:#fff;flex-shrink:0
+}
+.road-z{background:#0099cc}
+.road-x{background:#ff4444}
+.road-h{background:#777}
 
-.path{margin:10px 0;color:#aaa;font-size:12px;line-height:1.4}
+.path{margin:10px 0;color:#aaa;font-size:12px}
 .log{background:#222;padding:14px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.5}
 .green{color:#0f0}
-.red{color:#f33}
 .warn{color:#ffaa00}
-.quote{color:#0f0;margin-top:8px}
+
+.manual{
+  background:#222;padding:14px;border-radius:10px;margin-top:16px;
+  font-size:13px;line-height:1.5;color:#ccc
+}
+.manual h3{color:#ffaa00;font-size:15px;margin-bottom:8px;text-align:center}
 </style>
 </head>
 <body>
+
+<!-- 倒计时 -->
+<div class="count-box" id="countBox">
+  体验剩余时间：<span id="countTime">01:00</span>
+</div>
+
+<!-- 激活弹窗 -->
+<div id="activateModal" style="display:none;">
+  <div class="mask">
+    <div class="activate-box">
+      <h3>体验已结束</h3>
+      <input class="activate-input" id="activateCode" placeholder="请输入激活码" autocomplete="off">
+      <button class="activate-btn" onclick="checkActivate()">激活并使用</button>
+      <div class="activate-tip">
+        <b>激活后不支持退款</b><br>
+        恶意退款 → 激活码拉黑 → 软件立即失效
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="card">
   <h2>反赌博戒赌训练器</h2>
@@ -53,7 +116,7 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
   <div class="row"><span>总局数</span><span id="round">0</span></div>
   <div class="row"><span>送赌场抽水</span><span id="tax" class="warn">0.00</span></div>
 
-  <div class="chart" id="chart"></div>
+  <div class="road" id="road"></div>
 
   <input type="number" id="bet" value="10">
   <div class="btns">
@@ -70,142 +133,214 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 
   <div class="path" id="path"></div>
   <div class="log" id="log"></div>
+
+  <div class="manual">
+    <h3>📘 使用说明</h3>
+    <p><strong>1. 免费体验</strong>：1分钟全功能试用，时间到需激活。</p>
+    <p><strong>2. 真实规则</strong>：庄赢抽水5%，长期必输，还原赌场。</p>
+    <p><strong>3. 激活使用</strong>：购买激活码，输入即可永久使用。</p>
+    <p><strong>4. 退款规则</strong>：激活后不退，恶意退款拉黑失效。</p>
+    <p><strong>5. 戒赌目的</strong>：看清赌博真相，远离赌博。</p>
+  </div>
 </div>
 
 <script>
-let money = 1000;
-let round = 0;
-let tax = 0;
-let path = [];
-let history = [];
+// ==========================
+// 商家设置（你只改这里）
+// ==========================
+const CONFIG = {
+  trialMinutes: 1,          // 体验1分钟
+  
+  // 你允许的激活码（只有这里能激活）
+  validCodes: [
+    "JD2025001",
+    "JD2025002",
+    "JD2025003",
+    "JD2025004",
+    "JD2025005"
+  ],
 
-const quotes = [
-  "赢是过程，输是结果，赌场从不养闲人。",
-  "翻本是最大的陷阱，越想翻越输光。",
-  "你赢的每一笔，都是让你死得更惨的诱饵。",
-  "十赌九输，不赌为赢，这是数学铁律。",
-  "赌博最终输掉的不是钱，是人生和家庭。"
-];
+  // 拉黑的激活码（退款就加进来）
+  blackList: [
+    "JD2025999"
+  ]
+};
 
-function q() {
-  return quotes[Math.floor(Math.random() * quotes.length)];
+// 状态
+let trialEnd = false;
+let activateCode = localStorage.getItem("activate_code") || "";
+let isActivated = false;
+
+// 检查本地保存的激活码是否有效
+function checkLocalCode(){
+  if(!activateCode) return false;
+  if(CONFIG.blackList.includes(activateCode)) return false;
+  return CONFIG.validCodes.includes(activateCode);
+}
+isActivated = checkLocalCode();
+
+// ==========================
+// 倒计时
+// ==========================
+let countdown = CONFIG.trialMinutes * 60;
+let timer;
+
+function startCount(){
+  if(isActivated) return;
+  document.getElementById("countBox").classList.add("show");
+  timer = setInterval(()=>{
+    countdown--;
+    if(countdown <=0 ){
+      clearInterval(timer);
+      showActivate();
+      return;
+    }
+    let m = Math.floor(countdown /60);
+    let s = countdown %60;
+    document.getElementById("countTime").innerText = 
+      `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  },1000);
 }
 
-function refresh() {
-  document.getElementById('money').innerText = money.toFixed(2);
-  document.getElementById('round').innerText = round;
-  document.getElementById('tax').innerText = tax.toFixed(2);
-  drawChart();
+// ==========================
+// 激活弹窗
+// ==========================
+function showActivate(){
+  trialEnd = true;
+  document.getElementById("activateModal").style.display = "flex";
+  document.querySelector(".card").style.pointerEvents = "none";
 }
 
-function drawChart() {
-  const c = document.getElementById('chart');
-  c.innerHTML = '';
-  history.slice(-30).forEach(h => {
-    const d = document.createElement('div');
-    d.className = 'bar ' + (h === '庄' ? 'bar-z' : h === '闲' ? 'bar-x' : 'bar-h');
-    c.appendChild(d);
-  });
-}
+// 激活验证（全部带提示）
+function checkActivate(){
+  let code = document.getElementById("activateCode").value.trim();
 
-function resetMoney() {
-  money = Math.max(Number(document.getElementById('initMoney').value) || 1000, 1);
-  round = 0;
-  tax = 0;
-  path = [];
-  history = [];
-  refresh();
-  document.getElementById('log').innerText = "✅ 已重置\n" + q();
-}
-
-// 押注主函数（已修复）
-function play(typ) {
-  let bet = Number(document.getElementById('bet').value);
-  if (bet <= 0 || bet > money) {
-    alert("下注金额无效");
+  // 1. 空值
+  if(!code){
+    alert("请输入激活码！");
     return;
   }
 
-  const r = Math.random();
-  let res = r < 0.458 ? '庄' : r < 0.904 ? '闲' : '和';
-
-  // 抽水
-  if (typ === '庄' && res === '庄') {
-    tax += bet * 0.05;
+  // 2. 已拉黑
+  if(CONFIG.blackList.includes(code)){
+    alert("该激活码已被拉黑，无法使用！");
+    return;
   }
 
-  path.push(res);
-  history.push(res);
-  if (path.length > 15) path.shift();
-  round++;
-
-  if (typ === res) {
-    if (typ === '庄') money += bet * 0.95;
-    if (typ === '闲') money += bet;
-    if (typ === '和') money += bet * 8;
-  } else {
-    money -= bet;
+  // 3. 不是你设置的激活码
+  if(!CONFIG.validCodes.includes(code)){
+    alert("激活码不正确，请联系商家获取！");
+    return;
   }
 
+  // 4. 激活成功
+  activateCode = code;
+  isActivated = true;
+  localStorage.setItem("activate_code", code);
+  document.getElementById("activateModal").style.display = "none";
+  document.querySelector(".card").style.pointerEvents = "auto";
+  document.getElementById("countBox").classList.remove("show");
+  alert("激活成功！");
+}
+
+// ==========================
+// 启动检查
+// ==========================
+function init(){
+  if(!isActivated){
+    startCount();
+  }
+}
+
+// ==========================
+// 主功能
+// ==========================
+let money=1000,round=0,tax=0,path=[],history=[];
+const quotes=["赢是过程，输是结果，赌场从不养闲人。","翻本是最大的陷阱，越想翻越输光。","你赢的每一笔，都是让你死得更惨的诱饵。","十赌九输，不赌为赢，这是数学铁律。","赌博最终输掉的不是钱，是人生和家庭。"];
+function q(){return quotes[Math.floor(Math.random()*quotes.length)]}
+function refresh(){
+  document.getElementById('money').innerText=money.toFixed(2);
+  document.getElementById('round').innerText=round;
+  document.getElementById('tax').innerText=tax.toFixed(2);
+  drawRoad();
+}
+function drawRoad(){
+  const el=document.getElementById('road');
+  el.innerHTML='';
+  const list=history.slice(-42);
+  list.forEach(item=>{
+    const d=document.createElement('div');
+    if(item==='庄')d.className='road-item road-z';
+    else if(item==='闲')d.className='road-item road-x';
+    else d.className='road-item road-h';
+    d.innerText=item[0];
+    el.appendChild(d);
+  });
+}
+function resetMoney(){
+  money=Math.max(Number(document.getElementById('initMoney').value)||1000,1);
+  round=tax=0;path=history=[];refresh();
+  document.getElementById('log').innerText="✅ 已重置\n"+q();
+}
+function play(typ){
+  if(trialEnd && !isActivated){showActivate();return}
+  let bet=Number(document.getElementById('bet').value);
+  if(bet<=0||bet>money){alert("下注金额无效");return}
+  const r=Math.random();
+  let res=r<0.458?'庄':r<0.904?'闲':'和';
+  if(typ==='庄'&&res==='庄')tax+=bet*0.05;
+  path.push(res);history.push(res);if(path.length>15)path.shift();round++;
+  if(typ===res){
+    if(typ==='庄')money+=bet*0.95;
+    if(typ==='闲')money+=bet;
+    if(typ==='和')money+=bet*8;
+  }else{money-=bet;}
   refresh();
-  document.getElementById('log').innerText = `${typ === res ? '✅ 赢' : '❌ 输'} | 开：${res}\n` + q();
-
-  if (money <= 0) {
-    alert('💀 你已输光！现实中你会借贷、逾期、众叛亲离。');
-    resetMoney();
+  document.getElementById('log').innerText=`${typ===res?'✅ 赢':'❌ 输'} | 开：${res}\n`+q();
+  if(money<=0){alert('💀 你已输光！现实中你会借贷、逾期、众叛亲离。');resetMoney();}
+}
+function simulate(){
+  if(trialEnd && !isActivated){showActivate();return}
+  let m=Number(document.getElementById('initMoney').value)||1000;
+  for(let i=0;i<10000&&m>0;i++)Math.random()<0.458?(m+=9.5):(m-=10);
+  document.getElementById('log').innerText=`📉 10000局结局\n最终：${m.toFixed(2)} 元\n长期必亏\n`+q();
+}
+function martingaleTest(){
+  if(trialEnd && !isActivated){showActivate();return}
+  let m=Number(document.getElementById('initMoney').value)||1000,bet=10,maxLoss=0,curLoss=0;
+  for(let i=0;i<1000&&m>0;i++){
+    const res=Math.random()<0.458?'庄':'闲';
+    if(res==='庄'){m+=bet*0.95;bet=10;curLoss=0;}
+    else{m-=bet;bet*=2;curLoss++;maxLoss=Math.max(maxLoss,curLoss);}
   }
+  document.getElementById('log').innerText=`⚠️ 马丁结局\n最大连输：${maxLoss}\n最终：${m<=0?'爆仓':m.toFixed(2)}\n倍投必死\n`+q();
+}
+function antTest(){
+  if(trialEnd && !isActivated){showActivate();return}
+  let m=Number(document.getElementById('initMoney').value)||1000;
+  for(let i=0;i<10000&&m>0;i++)Math.random()<0.458?m+=9.5:m-=10;
+  document.getElementById('log').innerText=`🐜 蚂蚁搬家\n最终：${m.toFixed(2)} 元\n不爆仓但必亏\n`+q();
+}
+function debtTest(){
+  if(trialEnd && !isActivated){showActivate();return}
+  let m=1000,debt=0,bet=10;
+  for(let i=0;i<5000;i++){
+    Math.random()<0.458?(m+=bet*0.95,bet=10):(m-=bet,m<0?(debt-=m,m=0,bet=Math.min(30,debt/4)):bet*=2);
+  }
+  document.getElementById('log').innerText=`💸 负债结局\n欠债：${debt.toFixed(2)} 元\n家破人亡、征信黑户\n`+q();
+}
+function curveTest(){
+  if(trialEnd && !isActivated){showActivate();return}
+  let m=Number(document.getElementById('initMoney').value)||1000,s="";
+  for(let i=0;i<10&&m>0;i++){
+    for(let j=0;j<1000;j++)Math.random()<0.458?m+=9.5:m-=10;
+    s+=`${(i+1)*1000} 局 → ${m.toFixed(2)} 元\n`;
+  }
+  document.getElementById('log').innerText=`📉 亏损曲线\n${s}`+q();
 }
 
-// 10000局模拟
-function simulate() {
-  let m = Number(document.getElementById('initMoney').value) || 1000;
-  for (let i = 0; i < 10000 && m > 0; i++) {
-    Math.random() < 0.458 ? (m += 9.5) : (m -= 10);
-  }
-  document.getElementById('log').innerText = `📉 10000局结局\n最终：${m.toFixed(2)} 元\n长期必亏\n` + q();
-}
-
-// 马丁格尔
-function martingaleTest() {
-  let m = Number(document.getElementById('initMoney').value) || 1000;
-  let bet = 10, maxLoss = 0, curLoss = 0;
-  for (let i = 0; i < 1000 && m > 0; i++) {
-    const res = Math.random() < 0.458 ? '庄' : '闲';
-    if (res === '庄') { m += bet * 0.95; bet = 10; curLoss = 0; }
-    else { m -= bet; bet *= 2; curLoss++; maxLoss = Math.max(maxLoss, curLoss); }
-  }
-  document.getElementById('log').innerText = `⚠️ 马丁结局\n最大连输：${maxLoss}\n最终：${m <= 0 ? '爆仓' : m.toFixed(2)}\n倍投必死\n` + q();
-}
-
-// 蚂蚁搬家
-function antTest() {
-  let m = Number(document.getElementById('initMoney').value) || 1000;
-  for (let i = 0; i < 10000 && m > 0; i++) {
-    Math.random() < 0.458 ? m += 9.5 : m -= 10;
-  }
-  document.getElementById('log').innerText = `🐜 蚂蚁搬家\n最终：${m.toFixed(2)} 元\n不爆仓但必亏\n` + q();
-}
-
-// 负债模拟
-function debtTest() {
-  let m = 1000, debt = 0, bet = 10;
-  for (let i = 0; i < 5000; i++) {
-    Math.random() < 0.458 ? (m += bet * 0.95, bet = 10) : (m -= bet, m < 0 ? (debt -= m, m = 0, bet = Math.min(30, debt / 4)) : bet *= 2);
-  }
-  document.getElementById('log').innerText = `💸 负债结局\n欠债：${debt.toFixed(2)} 元\n家破人亡、征信黑户\n` + q();
-}
-
-// 亏损曲线
-function curveTest() {
-  let m = Number(document.getElementById('initMoney').value) || 1000;
-  let s = "";
-  for (let i = 0; i < 10 && m > 0; i++) {
-    for (let j = 0; j < 1000; j++) Math.random() < 0.458 ? m += 9.5 : m -= 10;
-    s += `${(i+1)*1000} 局 → ${m.toFixed(2)} 元\n`;
-  }
-  document.getElementById('log').innerText = `📉 亏损曲线\n${s}` + q();
-}
-
+// 启动
+init();
 resetMoney();
 </script>
 </body>
