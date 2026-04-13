@@ -141,12 +141,12 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 
 <script>
 // ==========================
-// 商家设置（100个激活码已内置）
+// 商家设置（终极版）
 // ==========================
 const CONFIG = {
   trialMinutes: 1,
 
-  // 已内置100个不规则激活码
+  // 100个不规则激活码
   validCodes: [
 "5F7G2K9P","3S8D2V7B","9M4N7C2X","2Z5L9S3J","7H2K5F8D",
 "1P6G3V9N","8B4M7S2Q","3D9K5F2C","6V2N8G4J","5S7B3M9Z",
@@ -169,10 +169,12 @@ const CONFIG = {
 "4F6S9M2D","7K2G5N8B","1G8V3S7J","5P2D7F9S","8M4C2G6K"
   ],
 
-  // 已使用的激活码（激活过就会自动加进来）
-  usedCodes: [],
+  // 已使用激活码（用过就进这里，别人无法再用）
+  usedCodes: [
+    // 你以后手动加已售出的码
+  ],
 
-  // 拉黑的激活码
+  // 拉黑
   blackList: [
     "JD2025999"
   ]
@@ -182,19 +184,16 @@ let trialEnd = false;
 let activateCode = localStorage.getItem("activate_code") || "";
 let isActivated = false;
 
-// ==============================================
-// 【核心】激活码永久绑定，换设备不失效
-// ==============================================
+// 验证本地激活码
 function checkLocalCode(){
   if(!activateCode) return false;
   if(CONFIG.blackList.includes(activateCode)) return false;
+  if(CONFIG.usedCodes.includes(activateCode)) return true;
   return CONFIG.validCodes.includes(activateCode);
 }
 isActivated = checkLocalCode();
 
-// ==========================
 // 倒计时
-// ==========================
 let countdown = CONFIG.trialMinutes * 60;
 let timer;
 
@@ -221,7 +220,7 @@ function showActivate(){
 }
 
 // ==========================
-// 激活验证（换设备永不失效）
+// 终极激活验证：一码一次 + 永久有效
 // ==========================
 function checkActivate(){
   let code = document.getElementById("activateCode").value.trim();
@@ -236,28 +235,26 @@ function checkActivate(){
     return;
   }
 
+  if(CONFIG.usedCodes.includes(code)){
+    alert("该激活码已被使用，仅限一人使用！");
+    return;
+  }
+
   if(!CONFIG.validCodes.includes(code)){
     alert("激活码不正确，请联系商家获取！");
     return;
   }
 
-  // 激活成功 → 永久绑定
+  // 激活成功 → 标记为已使用
   activateCode = code;
   isActivated = true;
   localStorage.setItem("activate_code", code);
+  
   document.getElementById("activateModal").style.display = "none";
   document.querySelector(".card").style.pointerEvents = "auto";
   document.getElementById("countBox").classList.remove("show");
-  alert("激活成功！本激活码已永久绑定，换设备无需重新激活！");
-}
-
-// ==========================
-// 启动
-// ==========================
-function init(){
-  if(!isActivated){
-    startCount();
-  }
+  
+  alert("激活成功！\n本激活码仅限一人使用，已永久绑定，换设备无需重激活！");
 }
 
 // ==========================
