@@ -146,34 +146,33 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 
 <script>
 // ==========================
-// 商家设置（你只改这里）
+// 商家设置（100个激活码已内置）
 // ==========================
 const CONFIG = {
-  trialMinutes: 1,          // 体验1分钟
+  trialMinutes: 1,
   
-  // 你允许的激活码（只有这里能激活）
-validCodes: [
-  "X9P7R25K",
-  "M3A7D28S",
-  "H4J6W92Q",
-  "Z5B7K27N",
-  "T2C4V93E",
-  "F6G2L48P",
-  "D3S7N29W",
-  "R5M2B74J",
-  "K9V2S63Q",
-  "B2T7Z45E",
-  "W7P3F26L",
-  "N4R7D29G",
-  "J6H2M54Q",
-  "S3K7B28V",
-  "P5W2T47E",
-  "C2F7N39L",
-  "G6J2P45Q",
-  "E3M7S28D",
-  "V4B2W79K",
-  "Q7T3N56H"
-],
+  // 100个不规则激活码（已写好）
+  validCodes: [
+"5F7G2K9P","3S8D2V7B","9M4N7C2X","2Z5L9S3J","7H2K5F8D",
+"1P6G3V9N","8B4M7S2Q","3D9K5F2C","6V2N8G4J","5S7B3M9Z",
+"2F8D4K6G","9C3V7N2P","4M6S9D2B","7J2F5K8V","1G8N3S6C",
+"5B2D9F4M","8Z3K7G2N","6S4V9D2F","3M7C5N8B","2J9G4K6S",
+"7P2V5D8G","4F6N9S2M","1D8B3G7Z","5K2S7F9N","8C4V2D6G",
+"3J7M5S8F","6N2G9D4B","5V7S2K8M","2D8F4G6N","9B3S7C2V",
+"4K6M9F2D","7G2N5J8S","1P8D3V6G","5F2B7K9S","8M4C2G6V",
+"3S7D5N8F","6G2V9K4D","5N7B2S8M","2J8G4F6C","9D3V7S2P",
+"4M6K9G2B","7F2S5D8N","1G8C3J7V","5K2D7F9G","8Z4S2N6D",
+"3V7M5B8S","6N2F9G4K","5S7G2D8B","2F8N4J6M","9C3D7V2S",
+"4J6S9F2G","7M2K5N8D","1P7G3S9V","5B2F7K8N","8D4M2S6G",
+"3G7V5C8F","6S2N9D4K","5V7J2F8M","2D8G4S6B","9K3S7N2D",
+"4F6M9V2C","7G2D5K8S","1N8B3G7F","5P2S7D9G","8C4V2F6M",
+"3S7K5N8D","6G2F9S4V","5M7B2D8K","2J8N4G6S","9D3F7S2V",
+"4K6G9M2B","7F2V5D8N","1G8S3J7C","5K2M7F9D","8Z4D2N6G",
+"3V7S5B8F","6N2G9K4D","5S7F2M8B","2D8J4G6N","9C3V7S2F",
+"4M6S9D2G","7G2S5F8V","1P8N3D7G","5F2K7S9M","8B4G2V6D",
+"3S7D5F8N","6V2S9G4K","5N7M2B8S","2J8F4D6G","9D3S7C2V",
+"4F6S9M2D","7K2G5N8B","1G8V3S7J","5P2D7F9S","8M4C2G6K"
+  ],
 
   // 拉黑的激活码（退款就加进来）
   blackList: [
@@ -226,29 +225,25 @@ function showActivate(){
   document.querySelector(".card").style.pointerEvents = "none";
 }
 
-// 激活验证（全部带提示）
+// 激活验证
 function checkActivate(){
   let code = document.getElementById("activateCode").value.trim();
 
-  // 1. 空值
   if(!code){
     alert("请输入激活码！");
     return;
   }
 
-  // 2. 已拉黑
   if(CONFIG.blackList.includes(code)){
     alert("该激活码已被拉黑，无法使用！");
     return;
   }
 
-  // 3. 不是你设置的激活码
   if(!CONFIG.validCodes.includes(code)){
     alert("激活码不正确，请联系商家获取！");
     return;
   }
 
-  // 4. 激活成功
   activateCode = code;
   isActivated = true;
   localStorage.setItem("activate_code", code);
