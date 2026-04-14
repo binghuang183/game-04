@@ -2,42 +2,68 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<title>激活验证</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+body{background:#f5f7fa;padding:30px;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.activate-box{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.08);padding:40px 32px;width:100%;max-width:420px}
+.activate-box h2{font-size:22px;margin-bottom:8px;color:#111}
+.activate-box p{color:#666;margin-bottom:24px}
+input{width:100%;padding:14px 16px;border:1px solid #ddd;border-radius:10px;font-size:15px;margin-bottom:16px}
+button{width:100%;padding:14px;background:#2d6fff;color:white;border:none;border-radius:10px;font-size:16px;font-weight:500;cursor:pointer;margin-bottom:10px}
+button:hover{background:#2563e0}
+.btn-preview{background:#6c757d}
+.btn-preview:hover{background:#5c636a}
+.tip{margin-top:16px;text-align:center;font-size:14px;color:#666}
+.tip.error{color:#ff4444}
+.tip.success{color:#00b96b}
+#mainContent{display:none;width:100%;max-width:800px;background:#fff;border-radius:16px;padding:40px;box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+</style>
+</head>
+
+<div id="activatePanel">
+  <div class="activate-box">
+    <h2>工具激活</h2>
+    <p>请输入激活码以解锁全部功能</p >
+    <input type="text" id="codeInput" placeholder="请输入激活码">
+    <button onclick="doActive()">立即激活</button>
+    <button class="btn-preview" onclick="startPreview()">试用5秒预览</button>
+    <div id="tip"></div>
+  </div>
+</div>
+
+<div id="mainContent">
+  <h2>激活成功 / 预览中 ✅</h2>
+  <p style="margin:16px 0;"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>反赌博戒赌训练器</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, -apple-system, sans-serif}
 body{background:#111;color:#fff;padding:20px;max-width:460px;margin:0 auto}
-.card{background:#1a1a1a;padding:22px;border-radius:16px}
+.card{background:#1a1a1a;padding:22px;border-radius:16px;margin-bottom:16px}
 h2{text-align:center;margin-bottom:10px}
 .tip{color:#ff5555;text-align:center;font-size:14px;margin-bottom:12px}
 
-.count-box{
-  background:#222;padding:8px 12px;border-radius:8px;text-align:center;
-  margin-bottom:12px;font-size:14px;color:#ffaa00;font-weight:bold;display:none
+.manual{
+  background:#222;
+  padding:14px;
+  border-radius:10px;
+  margin-top:16px;
+  font-size:13px;
+  line-height:1.5;
+  color:#ccc;
 }
-.count-box.show{display:block}
-
-.mask{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.95);z-index:999;
-  display:flex;align-items:center;justify-content:center;padding:20px
+.manual h3{
+  color:#ffaa00;
+  font-size:15px;
+  margin-bottom:8px;
+  text-align:center;
 }
-.activate-box{
-  background:#222;padding:28px;border-radius:18px;width:100%;max-width:360px
-}
-.activate-box h3{text-align:center;color:#ffaa00;margin-bottom:20px}
-.activate-input{
-  width:100%;padding:14px;background:#333;color:#fff;
-  border:1px solid #555;border-radius:10px;margin-bottom:14px;font-size:16px
-}
-.activate-btn{
-  width:100%;padding:14px;background:#0099cc;color:#fff;
-  border:none;border-radius:10px;font-size:16px;font-weight:bold
-}
-.activate-tip{
-  font-size:12px;color:#aaa;margin-top:14px;text-align:center;line-height:1.4
-}
-.activate-tip b{color:#ff4444}
+.manual p{margin-bottom:6px}
+.manual strong{color:#fff}
 
 .row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}
 input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;border-radius:8px;margin-bottom:10px}
@@ -53,49 +79,50 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 .btn-curve{background:#4444ff;margin-top:8px}
 
 .road{
-  background:#003d2b;padding:12px;border-radius:10px;margin:12px 0;
-  display:flex;flex-wrap:wrap;gap:5px;min-height:130px;justify-content:center
+  background:#003d2b;
+  padding:12px;
+  border-radius:10px;
+  margin:12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap:5px;
+  min-height:130px;
+  max-width: 100%;
+  justify-content: center;
+  text-align: center;
 }
 .road-item{
-  width:31px;height:31px;border-radius:5px;display:flex;
-  align-items:center;justify-content:center;font-size:12px;
-  font-weight:bold;color:#fff;flex-shrink:0
+  width: 31px;
+  height: 31px;
+  border-radius:5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:12px;
+  font-weight: bold;
+  color: #fff;
+  flex-shrink: 0;
 }
-.road-z{background:#0099cc}
-.road-x{background:#ff4444}
-.road-h{background:#777}
+.road-z{background:#0099cc;}
+.road-x{background:#ff4444;}
+.road-h{background:#777;}
 
-.path{margin:10px 0;color:#aaa;font-size:12px}
+/* 🔥 最新一局高亮标记 */
+.road-item.last{
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px 2px #ff0;
+  transform: scale(1.15);
+}
+
+.path{margin:10px 0;color:#aaa;font-size:12px;line-height:1.4}
 .log{background:#222;padding:14px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.5}
 .green{color:#0f0}
+.red{color:#f33}
 .warn{color:#ffaa00}
-
-.manual{
-  background:#222;padding:14px;border-radius:10px;margin-top:16px;
-  font-size:13px;line-height:1.5;color:#ccc
-}
-.manual h3{color:#ffaa00;font-size:15px;margin-bottom:8px;text-align:center}
+.quote{color:#0f0;margin-top:8px}
 </style>
 </head>
 <body>
-
-<div class="count-box" id="countBox">
-  体验剩余时间：<span id="countTime">01:00</span>
-</div>
-
-<div id="activateModal" style="display:none;">
-  <div class="mask">
-    <div class="activate-box">
-      <h3>体验已结束</h3>
-      <input class="activate-input" id="activateCode" placeholder="请输入激活码" autocomplete="off">
-      <button class="activate-btn" onclick="checkActivate()">激活并使用</button>
-      <div class="activate-tip">
-        <b>激活后不支持退款</b><br>
-        恶意退款 → 激活码拉黑 → 软件立即失效
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="card">
   <h2>反赌博戒赌训练器</h2>
@@ -131,221 +158,244 @@ input{width:100%;padding:11px;background:#222;color:#fff;border:1px solid #444;b
 
   <div class="manual">
     <h3>📘 使用说明</h3>
-    <p><strong>1. 免费体验</strong>：1分钟全功能试用，时间到需激活。</p>
-    <p><strong>2. 真实规则</strong>：庄赢抽水5%，长期必输，还原赌场。</p>
-    <p><strong>3. 激活使用</strong>：购买激活码，输入即可永久使用。</p>
-    <p><strong>4. 退款规则</strong>：激活后不退，恶意退款拉黑失效。</p>
-    <p><strong>5. 戒赌目的</strong>：看清赌博真相，远离赌博。</p>
+    <p><strong>1. 初始本金</strong>：可自定义开始金额，点击【重置】恢复。</p >
+    <p><strong>2. 下注金额</strong>：输入每局下注金额，选择押庄/闲/和。</p >
+    <p><strong>3. 真实规则</strong>：庄赢抽水5%，长期必亏，符合现实赌场。</p >
+    <p><strong>4. 模拟功能</strong>：快速测试10000局、倍投、负债等真实结局。</p >
+    <p><strong>5. 核心目的</strong>：用数学证明赌博必输，帮助戒赌。</p >
   </div>
+
 </div>
 
 <script>
-// ==========================
-// 商家设置（终极版）
-// ==========================
-const CONFIG = {
-  trialMinutes: 1,
+let money = 1000;
+let round = 0;
+let tax = 0;
+let path = [];
+let history = [];
 
-  // 100个不规则激活码
-  validCodes: [
-"5F7G2K9P","3S8D2V7B","9M4N7C2X","2Z5L9S3J","7H2K5F8D",
-"1P6G3V9N","8B4M7S2Q","3D9K5F2C","6V2N8G4J","5S7B3M9Z",
-"2F8D4K6G","9C3V7N2P","4M6S9D2B","7J2F5K8V","1G8N3S6C",
-"5B2D9F4M","8Z3K7G2N","6S4V9D2F","3M7C5N8B","2J9G4K6S",
-"7P2V5D8G","4F6N9S2M","1D8B3G7Z","5K2S7F9N","8C4V2D6G",
-"3J7M5S8F","6N2G9D4B","5V7S2K8M","2D8F4G6N","9B3S7C2V",
-"4K6M9F2D","7G2N5J8S","1P8D3V6G","5F2B7K9S","8M4C2G6V",
-"3S7D5N8F","6G2V9K4D","5N7B2S8M","2J8G4F6C","9D3V7S2P",
-"4M6K9G2B","7F2S5D8N","1G8C3J7V","5K2D7F9G","8Z4S2N6D",
-"3V7M5B8S","6N2F9G4K","5S7G2D8B","2F8N4J6M","9C3D7V2S",
-"4J6S9F2G","7M2K5N8D","1P7G3S9V","5B2F7K8N","8D4M2S6G",
-"3G7V5C8F","6S2N9D4K","5V7J2F8M","2D8G4S6B","9K3S7N2D",
-"4F6M9V2C","7G2D5K8S","1N8B3G7F","5P2S7D9G","8C4V2F6M",
-"3S7K5N8D","6G2F9S4V","5M7B2D8K","2J8N4G6S","9D3F7S2V",
-"4K6G9M2B","7F2V5D8N","1G8S3J7C","5K2M7F9D","8Z4D2N6G",
-"3V7S5B8F","6N2G9K4D","5S7F2M8B","2D8J4G6N","9C3V7S2F",
-"4M6S9D2G","7G2S5F8V","1P8N3D7G","5F2K7S9M","8B4G2V6D",
-"3S7D5F8N","6V2S9G4K","5N7M2B8S","2J8F4D6G","9D3S7C2V",
-"4F6S9M2D","7K2G5N8B","1G8V3S7J","5P2D7F9S","8M4C2G6K"
-  ],
+const quotes = [
+  "赢是过程，输是结果，赌场从不养闲人。",
+  "翻本是最大的陷阱，越想翻越输光。",
+  "赢的每一笔，都是让你死得更惨的诱饵。",
+  "十赌九输，不赌为赢，这是数学铁律。",
+  "赌博最终输掉的不是钱，是人生和家庭。"
+];
 
-  // 已使用激活码（用过就进这里，别人无法再用）
-  usedCodes: [
-    // 你以后手动加已售出的码
-  ],
-
-  // 拉黑
-  blackList: [
-    "JD2025999"
-  ]
-};
-
-let trialEnd = false;
-let activateCode = localStorage.getItem("activate_code") || "";
-let isActivated = false;
-
-// 验证本地激活码
-function checkLocalCode(){
-  if(!activateCode) return false;
-  if(CONFIG.blackList.includes(activateCode)) return false;
-  if(CONFIG.usedCodes.includes(activateCode)) return true;
-  return CONFIG.validCodes.includes(activateCode);
-}
-isActivated = checkLocalCode();
-
-// 倒计时
-let countdown = CONFIG.trialMinutes * 60;
-let timer;
-
-function startCount(){
-  if(isActivated) return;
-  document.getElementById("countBox").classList.add("show");
-  timer = setInterval(()=>{
-    countdown--;
-    if(countdown <=0 ){
-      clearInterval(timer);
-      showActivate();
-    }
-    let m = Math.floor(countdown /60);
-    let s = countdown %60;
-    document.getElementById("countTime").innerText = 
-      `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  },1000);
+function q() {
+  return quotes[Math.floor(Math.random() * quotes.length)];
 }
 
-function showActivate(){
-  trialEnd = true;
-  document.getElementById("activateModal").style.display = "flex";
-  document.querySelector(".card").style.pointerEvents = "none";
-}
-
-// ==========================
-// 终极激活验证：一码一次 + 永久有效
-// ==========================
-function checkActivate(){
-  let code = document.getElementById("activateCode").value.trim();
-
-  if(!code){
-    alert("请输入激活码！");
-    return;
-  }
-
-  if(CONFIG.blackList.includes(code)){
-    alert("该激活码已被拉黑，无法使用！");
-    return;
-  }
-
-  if(CONFIG.usedCodes.includes(code)){
-    alert("该激活码已被使用，仅限一人使用！");
-    return;
-  }
-
-  if(!CONFIG.validCodes.includes(code)){
-    alert("激活码不正确，请联系商家获取！");
-    return;
-  }
-
-  // 激活成功 → 标记为已使用
-  activateCode = code;
-  isActivated = true;
-  localStorage.setItem("activate_code", code);
-  
-  document.getElementById("activateModal").style.display = "none";
-  document.querySelector(".card").style.pointerEvents = "auto";
-  document.getElementById("countBox").classList.remove("show");
-  
-  alert("激活成功！\n本激活码仅限一人使用，已永久绑定，换设备无需重激活！");
-}
-
-// ==========================
-// 主功能
-// ==========================
-let money=1000,round=0,tax=0,path=[],history=[];
-const quotes=["赢是过程，输是结果，赌场从不养闲人。","翻本是最大的陷阱，越想翻越输光。","你赢的每一笔，都是让你死得更惨的诱饵。","十赌九输，不赌为赢，这是数学铁律。","赌博最终输掉的不是钱，是人生和家庭。"];
-function q(){return quotes[Math.floor(Math.random()*quotes.length)]}
-function refresh(){
-  document.getElementById('money').innerText=money.toFixed(2);
-  document.getElementById('round').innerText=round;
-  document.getElementById('tax').innerText=tax.toFixed(2);
+function refresh() {
+  document.getElementById('money').innerText = money.toFixed(2);
+  document.getElementById('round').innerText = round;
+  document.getElementById('tax').innerText = tax.toFixed(2);
   drawRoad();
 }
-function drawRoad(){
-  const el=document.getElementById('road');
-  el.innerHTML='';
-  const list=history.slice(-42);
-  list.forEach(item=>{
-    const d=document.createElement('div');
-    if(item==='庄')d.className='road-item road-z';
-    else if(item==='闲')d.className='road-item road-x';
-    else d.className='road-item road-h';
-    d.innerText=item[0];
+
+// 🔥 绘制路单 + 最新一局高亮
+function drawRoad() {
+  const el = document.getElementById('road');
+  el.innerHTML = '';
+  const list = history.slice(-42);
+
+  list.forEach((item, index) => {
+    const d = document.createElement('div');
+    if (item === '庄') d.className = 'road-item road-z';
+    else if (item === '闲') d.className = 'road-item road-x';
+    else d.className = 'road-item road-h';
+
+    // 最后一个格子高亮
+    if (index === list.length - 1 && list.length > 0) {
+      d.classList.add('last');
+    }
+
+    d.innerText = item.substring(0,1);
     el.appendChild(d);
   });
 }
-function resetMoney(){
-  money=Math.max(Number(document.getElementById('initMoney').value)||1000,1);
-  round=tax=0;path=history=[];refresh();
-  document.getElementById('log').innerText="✅ 已重置\n"+q();
-}
-function play(typ){
-  if(trialEnd && !isActivated){showActivate();return}
-  let bet=Number(document.getElementById('bet').value);
-  if(bet<=0||bet>money){alert("下注金额无效");return}
-  const r=Math.random();
-  let res=r<0.458?'庄':r<0.904?'闲':'和';
-  if(typ==='庄'&&res==='庄')tax+=bet*0.05;
-  path.push(res);history.push(res);if(path.length>15)path.shift();round++;
-  if(typ===res){
-    if(typ==='庄')money+=bet*0.95;
-    if(typ==='闲')money+=bet;
-    if(typ==='和')money+=bet*8;
-  }else{money-=bet;}
+
+function resetMoney() {
+  money = Math.max(Number(document.getElementById('initMoney').value) || 1000, 1);
+  round = 0;
+  tax = 0;
+  path = [];
+  history = [];
   refresh();
-  document.getElementById('log').innerText=`${typ===res?'✅ 赢':'❌ 输'} | 开：${res}\n`+q();
-  if(money<=0){alert('💀 你已输光！现实中你会借贷、逾期、众叛亲离。');resetMoney();}
-}
-function simulate(){
-  if(trialEnd && !isActivated){showActivate();return}
-  let m=Number(document.getElementById('initMoney').value)||1000;
-  for(let i=0;i<10000&&m>0;i++)Math.random()<0.458?(m+=9.5):(m-=10);
-  document.getElementById('log').innerText=`📉 10000局结局\n最终：${m.toFixed(2)} 元\n长期必亏\n`+q();
-}
-function martingaleTest(){
-  if(trialEnd && !isActivated){showActivate();return}
-  let m=Number(document.getElementById('initMoney').value)||1000,bet=10,maxLoss=0,curLoss=0;
-  for(let i=0;i<1000&&m>0;i++){
-    const res=Math.random()<0.458?'庄':'闲';
-    if(res==='庄'){m+=bet*0.95;bet=10;curLoss=0;}
-    else{m-=bet;bet*=2;curLoss++;maxLoss=Math.max(maxLoss,curLoss);}
-  }
-  document.getElementById('log').innerText=`⚠️ 马丁结局\n最大连输：${maxLoss}\n最终：${m<=0?'爆仓':m.toFixed(2)}\n倍投必死\n`+q();
-}
-function antTest(){
-  if(trialEnd && !isActivated){showActivate();return}
-  let m=Number(document.getElementById('initMoney').value)||1000;
-  for(let i=0;i<10000&&m>0;i++)Math.random()<0.458?m+=9.5:m-=10;
-  document.getElementById('log').innerText=`🐜 蚂蚁搬家\n最终：${m.toFixed(2)} 元\n不爆仓但必亏\n`+q();
-}
-function debtTest(){
-  if(trialEnd && !isActivated){showActivate();return}
-  let m=1000,debt=0,bet=10;
-  for(let i=0;i<5000;i++){
-    Math.random()<0.458?(m+=bet*0.95,bet=10):(m-=bet,m<0?(debt-=m,m=0,bet=Math.min(30,debt/4)):bet*=2);
-  }
-  document.getElementById('log').innerText=`💸 负债结局\n欠债：${debt.toFixed(2)} 元\n家破人亡、征信黑户\n`+q();
-}
-function curveTest(){
-  if(trialEnd && !isActivated){showActivate();return}
-  let m=Number(document.getElementById('initMoney').value)||1000,s="";
-  for(let i=0;i<10&&m>0;i++){
-    for(let j=0;j<1000;j++)Math.random()<0.458?m+=9.5:m-=10;
-    s+=`${(i+1)*1000} 局 → ${m.toFixed(2)} 元\n`;
-  }
-  document.getElementById('log').innerText=`📉 亏损曲线\n${s}`+q();
+  document.getElementById('log').innerText = "✅ 已重置\n" + q();
 }
 
-init();
+function play(typ) {
+  let bet = Number(document.getElementById('bet').value);
+  if (bet <= 0 || bet > money) {
+    alert("下注金额无效");
+    return;
+  }
+
+  const r = Math.random();
+  let res = r < 0.458 ? '庄' : r < 0.904 ? '闲' : '和';
+
+  if (typ === '庄' && res === '庄') {
+    tax += bet * 0.05;
+  }
+
+  path.push(res);
+  history.push(res);
+  if (path.length > 15) path.shift();
+  round++;
+
+  if (typ === res) {
+    if (typ === '庄') money += bet * 0.95;
+    if (typ === '闲') money += bet;
+    if (typ === '和') money += bet * 8;
+  } else {
+    money -= bet;
+  }
+
+  refresh();
+  document.getElementById('log').innerText = `${typ === res ? '✅ 赢' : '❌ 输'} | 开：${res}\n` + q();
+
+  if (money <= 0) {
+    alert('💀 你已输光！现实中你会借贷、逾期、众叛亲离。');
+    resetMoney();
+  }
+}
+
+function simulate() {
+  let m = Number(document.getElementById('initMoney').value) || 1000;
+  for (let i = 0; i < 10000 && m > 0; i++) {
+    Math.random() < 0.458 ? (m += 9.5) : (m -= 10);
+  }
+  document.getElementById('log').innerText = `📉 10000局结局\n最终：${m.toFixed(2)} 元\n长期必亏\n` + q();
+}
+
+function martingaleTest() {
+  let m = Number(document.getElementById('initMoney').value) || 1000;
+  let bet = 10, maxLoss = 0, curLoss = 0;
+  for (let i = 0; i < 1000 && m > 0; i++) {
+    const res = Math.random() < 0.458 ? '庄' : '闲';
+    if (res === '庄') { m += bet * 0.95; bet = 10; curLoss = 0; }
+    else { m -= bet; bet *= 2; curLoss++; maxLoss = Math.max(maxLoss, curLoss); }
+  }
+  document.getElementById('log').innerText = `⚠️ 马丁结局\n最大连输：${maxLoss}\n最终：${m <= 0 ? '爆仓' : m.toFixed(2)}\n倍投必死\n` + q();
+}
+
+function antTest() {
+  let m = Number(document.getElementById('initMoney').value) || 1000;
+  for (let i = 0; i < 10000 && m > 0; i++) {
+    Math.random() < 0.458 ? m += 9.5 : m -= 10;
+  }
+  document.getElementById('log').innerText = `🐜 蚂蚁搬家\n最终：${m.toFixed(2)} 元\n不爆仓但必亏\n` + q();
+}
+
+function debtTest() {
+  let m = 1000, debt = 0, bet = 10;
+  for (let i = 0; i < 5000; i++) {
+    Math.random() < 0.458 ? (m += bet * 0.95, bet = 10) : (m -= bet, m < 0 ? (debt -= m, m = 0, bet = Math.min(30, debt / 4)) : bet *= 2);
+  }
+  document.getElementById('log').innerText = `💸 负债结局\n欠债：${debt.toFixed(2)} 元\n家破人亡、征信黑户\n` + q();
+}
+
+function curveTest() {
+  let m = Number(document.getElementById('initMoney').value) || 1000;
+  let s = "";
+  for (let i = 0; i < 10 && m > 0; i++) {
+    for (let j = 0; j < 1000; j++) Math.random() < 0.458 ? m += 9.5 : m -= 10;
+    s += `${(i+1)*1000} 局 → ${m.toFixed(2)} 元\n`;
+  }
+  document.getElementById('log').innerText = `📉 亏损曲线\n${s}` + q();
+}
+
 resetMoney();
+</script>
+</body>
+</html></p >
+</div>
+
+<script>
+// 激活码列表
+const validCodes = [
+"KJDMOXK212D2","KJ32SDBU1YFY","KJMMMSTPBPIX","KJOU5EQEGF37","KJ6PIAIIBRDV",
+"KJQ568QF625D","KJSNKXQCBLID","KJBHGL3BZ9D4","KJ4GCPGUKJLT","KJF0GL0IE5AU"
+];
+
+// 拉黑列表
+const blacklist = [];
+
+// 设备唯一标识
+function getDeviceId() {
+  return btoa(navigator.userAgent + screen.width + screen.height);
+}
+
+// 绑定记录
+const bindRecord = JSON.parse(localStorage.getItem('bindRecord')) || {};
+
+// 页面加载自动校验
+window.onload = function(){
+  const code = localStorage.getItem('activeCode');
+  const device = getDeviceId();
+
+  if(code && bindRecord[code] === device && !blacklist.includes(code) && validCodes.includes(code)){
+    document.getElementById('activatePanel').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }
+}
+
+// 激活逻辑
+function doActive(){
+  const code = document.getElementById('codeInput').value.trim();
+  const tip = document.getElementById('tip');
+  const device = getDeviceId();
+
+  if(!code){
+    tip.className = 'error';
+    tip.innerText = '请输入激活码';
+    return;
+  }
+
+  if(blacklist.includes(code)){
+    tip.className = 'error';
+    tip.innerText = '该激活码已被禁用';
+    return;
+  }
+
+  if(!validCodes.includes(code)){
+    tip.className = 'error';
+    tip.innerText = '激活码无效';
+    return;
+  }
+
+  if(bindRecord[code] && bindRecord[code] !== device){
+    tip.className = 'error';
+    tip.innerText = '该激活码已绑定其他设备';
+    return;
+  }
+
+  // 绑定设备
+  bindRecord[code] = device;
+  localStorage.setItem('bindRecord', JSON.stringify(bindRecord));
+  localStorage.setItem('activeCode', code);
+
+  tip.className = 'success';
+  tip.innerText = '激活成功，正在进入...';
+
+  setTimeout(()=>{
+    document.getElementById('activatePanel').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  },600);
+}
+
+// 5秒预览
+function startPreview(){
+  document.getElementById('activatePanel').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+
+  setTimeout(()=>{
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('activatePanel').style.display = 'flex';
+    document.getElementById('tip').innerText = '预览时间已结束，请激活后使用';
+  }, 5000);
+}
 </script>
 </body>
 </html>
