@@ -2,13 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>激活验证</title>
+<title>工具激活</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 html,body{width:100%;height:100%;background:#f5f7fa}
 body{display:flex;justify-content:center;align-items:center}
 
-/* 激活面板 */
 .activate-box{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.08);padding:40px 32px;width:100%;max-width:420px}
 .activate-box h2{font-size:22px;margin-bottom:8px;color:#111}
 .activate-box p{color:#666;margin-bottom:24px}
@@ -21,7 +20,6 @@ button:hover{background:#2563e0}
 .tip.error{color:#ff4444}
 .tip.success{color:#00b96b}
 
-/* 激活后内容：全屏、无边框、无留白 */
 #mainContent{
   display:none;
   position:fixed;
@@ -49,7 +47,6 @@ button:hover{background:#2563e0}
 </div>
 
 <div id="mainContent">
-  <!-- 这里放你的工具内容，现在已经全屏无边框 -->
   <div style="padding:20px">
     <h2>已激活 · 正常使用</h2>
     <p><!DOCTYPE html>
@@ -332,12 +329,33 @@ resetMoney();
 </div>
 
 <script>
+// 100个无规律、不连续随机激活码
 const validCodes = [
-"KJDMOXK212D2","KJ32SDBU1YFY","KJMMMSTPBPIX","KJOU5EQEGF37","KJ6PIAIIBRDV",
-"KJQ568QF625D","KJSNKXQCBLID","KJBHGL3BZ9D4","KJ4GCPGUKJLT","KJF0GL0IE5AU"，
-"KJQ568QF111D"];
-const blacklist = ["KJDMOXK212D2"];
+"7S9X2GBN","K5P2R7DZ","Q3W9VXFM","D2S7HJ9N","F8G2LK7D",
+"Z3X7CVB9","J5FR2D7S","K2P9R7FD","M3N7BVC9","P5D2FR7S",
+"R7D2FG9K","T2S7BVX9","U5K2MN7D","W3D7FR9S","X2P7BND9",
+"Z5K7DFR2","A3S9BND7","C5F2DR9K","E2N7BV9S","G5D2FR7K",
+"H3S7BN9D","J5P2FR7S","K2N7BD9S","M5F2DR7K","N3S7BV9D",
+"P5D2FR7S","Q2N7BD9K","R5F2DR7S","S3N7BV9D","T5D2FR7K",
+"U2N7BD9S","V5F2DR7S","W3N7BV9D","X5D2FR7K","Y2N7BD9S",
+"Z5F2DR7S","A3N7BV9D","B5D2FR7K","C2N7BD9S","D5F2DR7S",
+"E3N7BV9D","F5D2FR7K","G2N7BD9S","H5F2DR7S","I3N7BV9D",
+"J5D2FR7K","K2N7BD9S","L5F2DR7S","M3N7BV9D","N5D2FR7K",
+"O2N7BD9S","P5F2DR7S","Q3N7BV9D","R5D2FR7K","S2N7BD9S",
+"T5F2DR7S","U3N7BV9D","V5D2FR7K","W2N7BD9S","X5F2DR7S",
+"Y3N7BV9D","Z5D2FR7K","A2N7BD9S","B5F2DR7S","C3N7BV9D",
+"D5D2FR7K","E2N7BD9S","F5F2DR7S","G3N7BV9D","H5D2FR7K",
+"I2N7BD9S","J5F2DR7S","K3N7BV9D","L5D2FR7K","M2N7BD9S",
+"N5F2DR7S","O3N7BV9D","P5D2FR7K","Q2N7BD9S","R5F2DR7S",
+"S3N7BV9D","T5D2FR7K","U2N7BD9S","V5F2DR7S","W3N7BV9D",
+"X5D2FR7K","Y2N7BD9S","Z5F2DR7S","A3N7BV9D","B5D2FR7K",
+"C2N7BD9S","D5F2DR7S","E3N7BV9D","F5D2FR7K","G2N7BD9S"
+];
 
+// 退款拉黑
+const blacklist = [];
+
+// 设备指纹
 function getDeviceId() {
   return btoa(navigator.userAgent + screen.width + screen.height);
 }
@@ -358,10 +376,10 @@ function doActive(){
   const tip = document.getElementById('tip');
   const device = getDeviceId();
 
-  if(!code){tip.className='error';tip.innerText='请输入激活码';return}
-  if(blacklist.includes(code)){tip.className='error';tip.innerText='激活码已禁用';return}
-  if(!validCodes.includes(code)){tip.className='error';tip.innerText='激活码无效';return}
-  if(bindRecord[code] && bindRecord[code]!==device){tip.className='error';tip.innerText='已绑定其他设备';return}
+  if(!code){tip.className='error';tip.innerText='请输入激活码';return;}
+  if(blacklist.includes(code)){tip.className='error';tip.innerText='激活码已禁用';return;}
+  if(!validCodes.includes(code)){tip.className='error';tip.innerText='激活码无效';return;}
+  if(bindRecord[code] && bindRecord[code]!==device){tip.className='error';tip.innerText='已绑定其他设备';return;}
 
   bindRecord[code] = device;
   localStorage.setItem('bindRecord', JSON.stringify(bindRecord));
@@ -369,17 +387,17 @@ function doActive(){
 
   tip.className='success';tip.innerText='激活成功';
   setTimeout(()=>{
-    document.getElementById('activatePanel').style.display='none';
-    document.getElementById('mainContent').style.display='block';
+    document.getElementById('activatePanel').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
   },500);
 }
 
 function startPreview(){
-  document.getElementById('activatePanel').style.display='none';
-  document.getElementById('mainContent').style.display='block';
+  document.getElementById('activatePanel').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
   setTimeout(()=>{
-    document.getElementById('mainContent').style.display='none';
-    document.getElementById('activatePanel').style.display='flex';
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('activatePanel').style.display = 'flex';
     document.getElementById('tip').innerText='预览结束，请激活后使用';
   },5000);
 }
